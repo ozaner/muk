@@ -26,11 +26,11 @@ pub struct Message {
 }
 
 impl MukSubcommand for Message {
-    fn run(&self, path: Option<PathBuf>) -> Result<(), Box<dyn std::error::Error>> {
+    fn run(&self, path: &Option<PathBuf>) -> Result<(), Box<dyn std::error::Error>> {
         if self.summary && self.description {
             return Err("Cannot specify both --summary (-s) and --description (-d)".into());
         }
-        match self.cmd {
+        match &self.cmd {
             Subcommand::Get => Ok(println!(
                 "{}",
                 util::git_show_format(

@@ -27,7 +27,7 @@ fn main() {
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     let res = match &root.command {
-        Subcommand::Message(cmd) => cmd.run(root.path),
+        Subcommand::Message(cmd) => cmd.run(&root.path),
     };
 
     match res {

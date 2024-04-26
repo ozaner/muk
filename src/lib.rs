@@ -5,5 +5,5 @@ pub mod message;
 pub mod util;
 
 pub trait MukSubcommand {
-    fn run(&self, dir: Option<PathBuf>) -> Result<(), Box<dyn std::error::Error>>;
+    fn run(&self, dir: &Option<PathBuf>) -> Result<(), Box<dyn std::error::Error>>;
 }

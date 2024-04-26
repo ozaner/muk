@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::{Args, ValueEnum};
 
 use crate::{hash::Hash, util, MukSubcommand};
@@ -24,7 +26,7 @@ pub struct Message {
 }
 
 impl MukSubcommand for Message {
-    fn run(&self) -> Result<(), Box<dyn std::error::Error>> {
+    fn run(&self, path: Option<PathBuf>) -> Result<(), Box<dyn std::error::Error>> {
         if self.summary && self.description {
             return Err("Cannot specify both --summary (-s) and --description (-d)".into());
         }
@@ -39,7 +41,8 @@ impl MukSubcommand for Message {
                     } else {
                         "%B"
                     },
-                    &self.hash
+                    &self.hash,
+                    path
                 )?
             )),
         }

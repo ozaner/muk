@@ -1,4 +1,4 @@
-use std::process;
+use std::{path::PathBuf, process};
 
 use clap::Parser;
 use muk::{message, MukSubcommand};
@@ -7,6 +7,9 @@ use muk::{message, MukSubcommand};
 #[command(version, about, long_about = None)]
 #[command(propagate_version = true)]
 struct RootCmd {
+    #[arg(short = 'C', long)]
+    path: Option<PathBuf>,
+
     #[command(subcommand)]
     command: Subcommand,
 }
@@ -24,7 +27,7 @@ fn main() {
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     let res = match &root.command {
-        Subcommand::Message(cmd) => cmd.run(),
+        Subcommand::Message(cmd) => cmd.run(root.path),
     };
 
     match res {

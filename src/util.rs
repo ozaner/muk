@@ -6,7 +6,7 @@ pub fn git_show_format(f: &str, hash: &Hash) -> Result<String, Box<dyn std::erro
     let output = Command::new("git")
         .arg("show")
         .arg("-s")
-        .arg(format!("--pretty=format:{s}"))
+        .arg(format!("--pretty=format:{f}"))
         .arg(hash.clone().as_ref())
         .output()?;
     let text = String::from_utf8(output.stdout)

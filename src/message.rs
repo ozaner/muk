@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 
 use clap::{Args, ValueEnum};
 
@@ -7,6 +7,7 @@ use crate::{hash::Hash, util, MukSubcommand};
 #[derive(Clone, Debug, ValueEnum)]
 enum Subcommand {
     Get,
+    Set,
 }
 
 #[derive(Debug, Args)]
@@ -45,6 +46,28 @@ impl MukSubcommand for Message {
                     path
                 )?
             )),
+            Subcommand::Set => {
+                let mut hash = &self.hash;
+                if let Hash::Hash { value } = hash {
+                    if util::get_root(path)?.starts_with(value) {
+                        hash = &Hash::Root;
+                    }
+                }
+
+                //make amend commit (interactive)
+                util::do_git(path)?
+                    .args(["commit", "--allow-empty", "--fixup"])
+                    .arg(format!("amend:{}", hash.resolve_hash(path)?))
+                    .output()?;
+
+                //autosquash amend commit
+                env::set_var("GIT_SEQUENCE_EDITOR", ":");
+                util::do_git(path)?
+                    .args(["rebase", "-i", "--autostash", "--autosquash"])
+                    .arg(hash.to_arg_less_one())
+                    .output()?;
+                Ok(())
+            }
         }
     }
 }

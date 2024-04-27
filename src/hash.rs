@@ -20,6 +20,14 @@ impl Hash {
         }
     }
 
+    pub fn to_arg_less_one(&self) -> String {
+        match self {
+            Hash::Head => "HEAD~",
+            Hash::Root => "--root",
+            Hash::Hash { value } => value,
+        }
+        .to_string()
+            + "~"
     }
 }
 

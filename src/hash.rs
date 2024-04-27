@@ -5,17 +5,18 @@ use clap::Parser;
 use crate::util::do_git;
 
 #[derive(Debug, Clone, Parser)]
-pub struct Hash {
-    #[clap(default_value = "head")]
-    value: String,
+pub enum Hash {
+    Head,
+    Root,
+    Hash { value: String },
 }
 
 impl Hash {
     pub fn resolve_hash(&self, path: &Option<PathBuf>) -> Result<String, std::io::Error> {
-        match self.value.as_str() {
-            "head" => Self::get_head(path),
-            "root" => Self::get_root(path),
-            _ => Ok(self.value.clone()),
+        match self {
+            Hash::Head => Self::get_head(path),
+            Hash::Root => Self::get_root(path),
+            Hash::Hash { value } => Ok(value.clone()),
         }
     }
 
@@ -43,17 +44,17 @@ impl Hash {
     }
 }
 
-
 impl FromStr for Hash {
     type Err = std::io::Error;
 
-    fn from_str(hash: &str) -> Result<Self, Self::Err> {
-        let hash = hash.to_lowercase();
-        match hash.as_str() {
-            "head" | "root" => Ok(Self { value: hash }),
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        let value = value.to_lowercase();
+        match value.as_str() {
+            "head" => Ok(Self::Head),
+            "root" => Ok(Self::Root),
             _ => {
-                assert!(hash.len() >= 7, "hashes must be at least 7 digits long");
-                Ok(Self { value: hash })
+                assert!(value.len() >= 7, "hashes must be at least 7 digits long");
+                Ok(Self::Hash { value })
             }
         }
     }

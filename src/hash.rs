@@ -2,7 +2,7 @@ use std::{path::PathBuf, str::FromStr};
 
 use clap::Parser;
 
-use crate::util::do_git;
+use crate::util;
 
 #[derive(Debug, Clone, Parser)]
 pub enum Hash {
@@ -14,33 +14,12 @@ pub enum Hash {
 impl Hash {
     pub fn resolve_hash(&self, path: &Option<PathBuf>) -> Result<String, std::io::Error> {
         match self {
-            Hash::Head => Self::get_head(path),
-            Hash::Root => Self::get_root(path),
+            Hash::Head => util::get_head(path),
+            Hash::Root => util::get_root(path),
             Hash::Hash { value } => Ok(value.clone()),
         }
     }
 
-    fn get_head(path: &Option<PathBuf>) -> Result<String, std::io::Error> {
-        let output = do_git(path)?.arg("rev-parse").arg("head").output()?;
-        let hash = String::from_utf8(output.stdout)
-            .unwrap()
-            .trim_end()
-            .to_string();
-        Ok(hash)
-    }
-
-    fn get_root(path: &Option<PathBuf>) -> Result<String, std::io::Error> {
-        let output = do_git(path)?
-            .arg("rev-list")
-            .arg("--all")
-            .arg("--max-parents=0")
-            .arg("head")
-            .output()?;
-        let hash = String::from_utf8(output.stdout)
-            .unwrap()
-            .trim_end()
-            .to_string();
-        Ok(hash)
     }
 }
 

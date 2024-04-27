@@ -29,3 +29,25 @@ pub fn git_show_format(
         .to_string();
     Ok(text)
 }
+
+pub fn get_head(path: &Option<PathBuf>) -> Result<String, std::io::Error> {
+    let output = do_git(path)?.arg("rev-parse").arg("head").output()?;
+    let hash = String::from_utf8(output.stdout)
+        .unwrap()
+        .trim_end()
+        .to_string();
+    Ok(hash)
+}
+
+pub fn get_root(path: &Option<PathBuf>) -> Result<String, std::io::Error> {
+    let output = do_git(path)?
+        .arg("rev-list")
+        .arg("--max-parents=0")
+        .arg("head")
+        .output()?;
+    let hash = String::from_utf8(output.stdout)
+        .unwrap()
+        .trim_end()
+        .to_string();
+    Ok(hash)
+}

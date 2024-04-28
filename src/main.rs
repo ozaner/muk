@@ -1,3 +1,55 @@
+// muk message -s/-d/None get <hash>=HEAD
+// muk message set <message>=open-editor
+
+// muk committer get <hash>
+// muk author set <hash> <user>=current
+// muk committer set <hash> <user>=current
+
+// muk cdate get <hash>
+// muk cdate set <hash> <ISO 8601>=now
+// muk adate sync <hash>     (can only synx adate to cdate, not vice-versa)
+
+// muk user add <user>
+// muk user rm <user>
+// muk user list
+// muk user switch <user>
+
+// #[derive(Debug, Default, Clone, Parser)]
+// pub struct HashRange {
+//     start: Hash,
+//     end: Option<Hash>,
+// }
+
+// impl ToString for HashRange {
+//     fn to_string(&self) -> String {
+//         let mut str = self.start.value;
+//         if let Some(end) = self.end.as_ref() {
+//             str.push_str(&format!("..{}", end.value));
+//         }
+//         str
+//     }
+// }
+
+// impl FromStr for HashRange {
+//     type Err = std::io::Error;
+
+//     fn from_str(hash: &str) -> Result<Self, Self::Err> {
+//         let hash = hash.to_lowercase();
+//         if hash.contains("..") {
+//             let (start, end) = hash.split_once("..").unwrap();
+//             Ok(Self {
+//                 start: Hash::from_str(start)?,
+//                 end: Some(Hash::from_str(end)?),
+//             })
+//         } else {
+//             Ok(Self {
+//                 start: Hash::from_str(&hash)?,
+//                 end: None,
+//             })
+//         }
+//     }
+// }
+
 use std::{path::PathBuf, process};
 
 use clap::Parser;
